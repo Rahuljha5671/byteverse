@@ -21,7 +21,23 @@ productState:
   isDynamic: true
   alias: write_all_data_to_iceberg_table
   retentionVersions: ""
-  logicalSchema: ""
+  logicalSchema:
+    properties:
+      Name:
+        type: STRING
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
+        type: STRING
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
+        type: STRING
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
   stateStoreType: loadDataIceberg
   isProfilingEnabled: true
   updateStrategy: Overwrite
@@ -31,7 +47,7 @@ productState:
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: false
+    enforceSchema: true
     enforceSchemaMethod: Warning
     catalogType: postgres
   refreshInterval: None
