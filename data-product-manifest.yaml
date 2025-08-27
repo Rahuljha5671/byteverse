@@ -1,11 +1,11 @@
-jobId: "999"
-jobName: SADP-Rahul
+jobId: "1025"
+jobName: SADP_Rahul_variable
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
 alias: write_all_data_to_iceberg_table
 discoveryPort:
-  name: SADP-Rahul
+  name: SADP_Rahul_variable
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -39,8 +39,7 @@ productState:
         sourceColumn: City
         sourceTable: public.data_1
   stateStoreType: loadDataIceberg
-  isProfilingEnabled: true
-  updateStrategy: Overwrite
+  isProfilingEnabled: false
   tableName: iceberg_meta.user_master
   warehousePath: /data/tmp/iceberg_warehouse_test
   catalogName: postgres_catalog
