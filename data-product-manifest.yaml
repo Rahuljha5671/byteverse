@@ -3,7 +3,7 @@ jobName: SADP_Rahul_2
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: write_all_data_to_iceberg_table
+alias: write_all_data_to_iceberg_table2
 discoveryPort:
   name: SADP_Rahul_2
 inputPorts:
