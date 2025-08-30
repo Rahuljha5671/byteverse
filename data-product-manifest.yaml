@@ -3,7 +3,7 @@ jobName: SADP-Rahul5
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: write_all_data_to_iceberg_table3
+alias: write_all_data_to_iceberg_table5
 discoveryPort:
   name: SADP-Rahul5
 inputPorts:
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: write_all_data_to_iceberg_table3
+  alias: write_all_data_to_iceberg_table5
   retentionVersions: ""
   logicalSchema:
     properties:
