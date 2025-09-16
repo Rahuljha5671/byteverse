@@ -1,11 +1,11 @@
-jobId: "1094"
-jobName: sales_transaction_history_sadp_Rahul
+jobId: "1097"
+jobName: transaction_history_2_rahul
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: loading_all_into_dw_schema
+alias: save_all_in_postgres_txn_2
 discoveryPort:
-  name: sales_transaction_history_sadp_Rahul
+  name: transaction_history_2_rahul
 inputPorts:
   - alias: Sales_Transaction_History_-_public_schema_1
     isDynamic: true
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: loading_all_into_dw_schema
+  alias: save_all_in_postgres_txn_2
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -57,17 +57,17 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres Connection
-  tableName: dw.sales_transaction_history_sadp_Rahul
+  tableName: dw.sales_transaction_history_sadp_rahul_2
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
     enforceSchemaMethod: Warning
-  refreshInterval: 12 13 * * *
+  refreshInterval: 13 13 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from transaction_rahul
+    description: select all from rdbms_2
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Sales_Transaction_History_-_public_schema_1
