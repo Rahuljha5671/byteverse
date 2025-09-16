@@ -1,61 +1,76 @@
-jobId: "1076"
-jobName: SADP-Test_Rahul
+jobId: "1094"
+jobName: sales_transaction_history_sadp_Rahul
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: saving_for_testing_for_purpose
+alias: loading_all_into_dw_schema
 discoveryPort:
-  name: SADP-Test_Rahul
+  name: sales_transaction_history_sadp_Rahul
 inputPorts:
-  - alias: Postgres_Data_1_1
+  - alias: Sales_Transaction_History_-_public_schema_1
     isDynamic: true
     connection: Postgres Connection
-    tableName/query: data_1
+    tableName/query: sales_transaction_history
     optional:
       persistDataFrame: false
       enableDataReconciliation: false
       enforceSchema: false
-      dataSetUrn: urn:dv:dataset:2a4d9b83-0e65-472a-9485-abb042427312
+      dataSetUrn: urn:dv:dataset:2f865ef0-1431-4d32-ab48-7c915d4f01d5
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: saving_for_testing_for_purpose
+  alias: loading_all_into_dw_schema
   retentionVersions: ""
   logicalSchema:
     properties:
-      Name:
+      txn_id:
         type: STRING
-        description: Name of the user
-        sourceColumn: Name
-        sourceTable: public.data_1
-      Age:
+        description: Reference to the transaction (public.sales_transaction.txn_id)
+        sourceColumn: txn_id
+        sourceTable: public.sales_transaction_history
+      product_id:
         type: STRING
-        description: Age of the user
-        sourceColumn: Age
-        sourceTable: public.data_1
-      City:
+        description: Reference to the product (public.product.product_id)
+        sourceColumn: product_id
+        sourceTable: public.sales_transaction_history
+      price:
         type: STRING
-        description: Location of the user
-        sourceColumn: City
-        sourceTable: public.data_1
+        description: Price of the product at the time of transaction
+        sourceColumn: price
+        sourceTable: public.sales_transaction_history
+      effective_from:
+        type: STRING
+        description: Start date of the price validity period
+        sourceColumn: effective_from
+        sourceTable: public.sales_transaction_history
+      effective_to:
+        type: STRING
+        description: End date of the price validity period
+        sourceColumn: effective_to
+        sourceTable: public.sales_transaction_history
+      is_current:
+        type: STRING
+        description: Indicates if the price record is currently valid
+        sourceColumn: is_current
+        sourceTable: public.sales_transaction_history
   stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: false
   updateStrategy: Overwrite
-  connection: Postgres DW Storage Connection
-  tableName: public.sadp_rahul_test
+  connection: Postgres Connection
+  tableName: dw.sales_transaction_history_sadp_Rahul
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
     enforceSchemaMethod: Warning
-  refreshInterval: 16 12  * * *
+  refreshInterval: 12 13 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: temp
+    description: select all from transaction_rahul
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: Postgres_Data_1_1
+      - inputDataFrame: Sales_Transaction_History_-_public_schema_1
         tempViewName: temp
     query: select * from temp
     optional:
