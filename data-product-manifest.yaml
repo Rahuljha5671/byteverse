@@ -1,80 +1,62 @@
-jobId: "1098"
-jobName: sales_transaction_again
+jobId: "1110"
+jobName: Rahul_sadp_s3_connection_by_vatsal
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_all_in_again_dp
+alias: load_all_into_iceberg_ware_s3_connection_by_vatsal
 discoveryPort:
-  name: sales_transaction_again
+  name: Rahul_sadp_s3_connection_by_vatsal
 inputPorts:
-  - alias: sales_transaction_dataset_rahul_1
+  - alias: Postgres_Data_1_1
     isDynamic: true
     connection: Postgres Connection
-    tableName/query: sales_transaction
+    tableName/query: data_1
     optional:
       persistDataFrame: false
       enableDataReconciliation: false
       enforceSchema: false
-      dataSetUrn: urn:dv:dataset:8c5f1fc5-9a6a-40f0-9bc6-cb4ff3a7a2bb
+      dataSetUrn: urn:dv:dataset:2a4d9b83-0e65-472a-9485-abb042427312
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_in_again_dp
+  alias: load_all_into_iceberg_ware_s3_connection_by_vatsal
   retentionVersions: ""
-  logicalSchema:
-    properties:
-      txn_id:
-        type: STRING
-        description: Reference to the transaction (public.sales_transaction.txn_id)
-        sourceColumn: txn_id
-        sourceTable: public.sales_transaction_history
-      product_id:
-        type: STRING
-        description: Reference to the product (public.product.product_id)
-        sourceColumn: product_id
-        sourceTable: public.sales_transaction_history
-      price:
-        type: STRING
-        description: Price of the product at the time of transaction
-        sourceColumn: price
-        sourceTable: public.sales_transaction_history
-      effective_from:
-        type: STRING
-        description: Start date of the price validity period
-        sourceColumn: effective_from
-        sourceTable: public.sales_transaction_history
-      effective_to:
-        type: STRING
-        description: End date of the price validity period
-        sourceColumn: effective_to
-        sourceTable: public.sales_transaction_history
-      is_current:
-        type: STRING
-        description: Indicates if the price record is currently valid
-        sourceColumn: is_current
-        sourceTable: public.sales_transaction_history
-  stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: false
+  logicalSchema: ""
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: true
   updateStrategy: Overwrite
-  connection: Postgres Connection
-  tableName: dw.rahul_sales_again
+  tableName: iceberg_meta.rahul_s3_warehouse_by_vatsal
+  warehousePath: s3a://dataverse/iceberg_warehouse_testing/
+  catalogName: postgres_catalog
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: true
+    enforceSchema: false
     enforceSchemaMethod: Warning
-  refreshInterval: 14 13 * * *
+    catalogType: postgres
+    connection: s3_connection_by_vatsal
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
+  refreshInterval: 31 12 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from dataset_rahul
+    description: select all form postgres table data 1
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: sales_transaction_dataset_rahul_1
+      - inputDataFrame: Postgres_Data_1_1
         tempViewName: temp
     query: select * from temp
     optional:
       persistDataFrame: false
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    NullValueCheck:
+      productState:
+        checks:
+          - column: ""
+            expression: ==
+        referenceAlias: load_all_into_iceberg_ware_s3_connection_by_vatsal
