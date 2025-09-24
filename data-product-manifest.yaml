@@ -1,11 +1,11 @@
-jobId: "1110"
-jobName: Rahul_sadp_s3_connection_by_vatsal
+jobId: "1113"
+jobName: SADP-TE
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_all_into_iceberg_ware_s3_connection_by_vatsal
+alias: load_all_for_te
 discoveryPort:
-  name: Rahul_sadp_s3_connection_by_vatsal
+  name: SADP-TE
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -19,31 +19,42 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_iceberg_ware_s3_connection_by_vatsal
+  alias: load_all_for_te
   retentionVersions: ""
-  logicalSchema: ""
+  logicalSchema:
+    properties:
+      Name:
+        type: STRING
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
+        type: STRING
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
+        type: STRING
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
   stateStoreType: loadDataIceberg
-  isProfilingEnabled: true
+  isProfilingEnabled: false
   updateStrategy: Overwrite
-  tableName: iceberg_meta.rahul_s3_warehouse_by_vatsal
-  warehousePath: s3a://dataverse/iceberg_warehouse_testing/
+  tableName: iceberg_meta.user_master
+  warehousePath: /data/tmp/iceberg_warehouse_test
   catalogName: postgres_catalog
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: false
+    enforceSchema: true
     enforceSchemaMethod: Warning
     catalogType: postgres
-    connection: s3_connection_by_vatsal
-    loggingOptions:
-      printSchema: true
-      count: true
-      showData: true
-  refreshInterval: 31 12 * * *
+  refreshInterval: 32 1 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all form postgres table data 1
+    description: select all for te
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
@@ -53,10 +64,4 @@ transformation:
       persistDataFrame: false
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules:
-    NullValueCheck:
-      productState:
-        checks:
-          - column: ""
-            expression: ==
-        referenceAlias: load_all_into_iceberg_ware_s3_connection_by_vatsal
+  dataQualityRules: {}
