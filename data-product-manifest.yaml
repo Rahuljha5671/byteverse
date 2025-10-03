@@ -1,11 +1,11 @@
-jobId: "1126"
-jobName: Accounts_depo_sadp_rahul
+jobId: "1132"
+jobName: SADP-Rahul_local
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
-domain: accounts_deposits
-alias: load_all_into_postgres_deposits
+domain: business
+alias: load_all_into_local_trigger
 discoveryPort:
-  name: Accounts_depo_sadp_rahul
+  name: SADP-Rahul_local
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -19,65 +19,42 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_postgres_deposits
+  alias: load_all_into_local_trigger
   retentionVersions: ""
   logicalSchema:
     properties:
-      deposit_id:
+      Name:
         type: STRING
-        description: Primary key, unique identifier for the deposit account
-        sourceColumn: deposit_id
-        sourceTable: public.deposit_account
-      customer_id:
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
         type: STRING
-        description: Reference to customer (public.customer.customer_id)
-        sourceColumn: customer_id
-        sourceTable: public.deposit_account
-      product_id:
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
         type: STRING
-        description: Reference to deposit product (public.deposit_product.product_id)
-        sourceColumn: product_id
-        sourceTable: public.deposit_account
-      account_number:
-        type: STRING
-        description: Unique deposit account number
-        sourceColumn: account_number
-        sourceTable: public.deposit_account
-      principal_amount:
-        type: STRING
-        description: Principal amount deposited
-        sourceColumn: principal_amount
-        sourceTable: public.deposit_account
-      start_date:
-        type: STRING
-        description: Start date of the deposit
-        sourceColumn: start_date
-        sourceTable: public.deposit_account
-      maturity_date:
-        type: STRING
-        description: Maturity date of the deposit
-        sourceColumn: maturity_date
-        sourceTable: public.deposit_account
-      maturity_amount:
-        type: STRING
-        description: Expected maturity amount of the deposit
-        sourceColumn: maturity_amount
-        sourceTable: public.deposit_account
-  stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: true
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: false
   updateStrategy: Overwrite
-  connection: Postgres Connection
-  tableName: dw.dp_sadp_deposit_rahul
+  tableName: iceberg_meta.user_master
+  warehousePath: /data/tmp/iceberg_warehouse_test
+  catalogName: postgres_catalog
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
     enforceSchemaMethod: Warning
-  refreshInterval: 33 2 * * *
+    catalogType: postgres
+  refreshInterval: 32 17 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: selecting all deposits
+    description: select all from local trigger
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
