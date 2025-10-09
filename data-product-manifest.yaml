@@ -1,11 +1,11 @@
-jobId: "1132"
-jobName: SADP-Rahul_local
+jobId: "1144"
+jobName: SADP-Rahul-Zap
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_all_into_local_trigger
+alias: load_all_into_iceberg_for_zap
 discoveryPort:
-  name: SADP-Rahul_local
+  name: SADP-Rahul-Zap
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_local_trigger
+  alias: load_all_into_iceberg_for_zap
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -50,11 +50,11 @@ productState:
     enforceSchema: true
     enforceSchemaMethod: Warning
     catalogType: postgres
-  refreshInterval: 32 17 * * *
+  refreshInterval: 33 17 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from local trigger
+    description: load all for zap
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
