@@ -1,11 +1,11 @@
-jobId: "1162"
-jobName: Data-Quality-Check-Pipeline
+jobId: "1163"
+jobName: Quality-Check-Test
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: Load_to_postgres_push
+alias: save_data_to_postgres_
 discoveryPort:
-  name: Data-Quality-Check-Pipeline
+  name: Quality-Check-Test
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: Load_to_postgres_push
+  alias: save_data_to_postgres_
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -47,20 +47,16 @@ productState:
   isProfilingEnabled: true
   updateStrategy: Overwrite
   connection: Postgres Connection
-  tableName: quality_check_test
+  tableName: data_quality_test2
   optional:
     persistDataFrame: false
-    enableDataReconciliation: true
+    enableDataReconciliation: false
     enforceSchema: true
-    loggingOptions:
-      printSchema: true
-      count: true
-      showData: true
   refreshInterval: None
 transformation:
   - isDynamic: true
-    alias: Spark_SQL_2
-    description: Copy all data push
+    alias: Spark_SQL_1
+    description: "all data copy "
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
@@ -68,54 +64,10 @@ transformation:
     query: select * from temp
     optional:
       persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules:
-    RecordCountCheck:
-      productState:
-        expression: ">="
-        number: 100
-        referenceAlias: Load_to_postgres_push
-    NullValueCheck:
-      productState:
-        checks:
-          - column: Name
-            expression: ">="
-            number: 0
-        referenceAlias: Load_to_postgres_push
-    NullCombinationCheck:
-      productState:
-        checks:
-          - columns:
-              - Name
-            expression: <=
-            number: 0.1
-        referenceAlias: Load_to_postgres_push
-    UniquenessCheck:
-      productState:
-        checks:
-          - column: "Age "
-          - column: Name
-        referenceAlias: Load_to_postgres_push
-    UniqueCombinationCheck:
-      productState:
-        checks:
-          - columns:
-              - Name
-        referenceAlias: Load_to_postgres_push
-    DistinctValueCountCheck:
-      productState:
-        checks:
-          - column: Name
-            expression: ">="
-            number: 200
-        referenceAlias: Load_to_postgres_push
-    UnacceptableTextValueCheck:
-      productState:
-        checks:
-          - column: Name
-            valueList:
-              - Alice
-              - Bob
-            expression: ==
-        referenceAlias: Load_to_postgres_push
+  dataQualityRules: {}
