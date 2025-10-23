@@ -5,7 +5,7 @@ developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
 alias: Load_to_postgres_push
 discoveryPort:
-  name: Data-Quality-Check-Pipeline
+  name: Data-Quality-Check-Pipeline-1
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
