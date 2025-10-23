@@ -3,7 +3,7 @@ jobName: Data-Quality-Check-Pipeline
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: Load_to_postgres
+alias: Load_to_postgres_push
 discoveryPort:
   name: Data-Quality-Check-Pipeline
 inputPorts:
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: Load_to_postgres
+  alias: Load_to_postgres_push
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -60,7 +60,7 @@ productState:
 transformation:
   - isDynamic: true
     alias: Spark_SQL_2
-    description: Copy all data
+    description: Copy all data push
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
@@ -75,14 +75,14 @@ controlPort:
       productState:
         expression: ">="
         number: 100
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     NullValueCheck:
       productState:
         checks:
           - column: Name
             expression: ">="
             number: 0
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     NullCombinationCheck:
       productState:
         checks:
@@ -90,26 +90,26 @@ controlPort:
               - Name
             expression: <=
             number: 0.1
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     UniquenessCheck:
       productState:
         checks:
           - column: "Age "
           - column: Name
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     UniqueCombinationCheck:
       productState:
         checks:
           - columns:
               - Name
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     DistinctValueCountCheck:
       productState:
         checks:
           - column: Name
             expression: ">="
             number: 200
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
     UnacceptableTextValueCheck:
       productState:
         checks:
@@ -118,4 +118,4 @@ controlPort:
               - Alice
               - Bob
             expression: ==
-        referenceAlias: Load_to_postgres
+        referenceAlias: Load_to_postgres_push
