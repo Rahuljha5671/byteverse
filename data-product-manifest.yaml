@@ -38,11 +38,6 @@ productState:
         description: Location of the user
         sourceColumn: City
         sourceTable: public.data_1
-      Occupation:
-        type: STRING
-        description: Occupation of the user
-        sourceColumn: Occupation
-        sourceTable: public.data_1
   stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: true
   updateStrategy: Overwrite
