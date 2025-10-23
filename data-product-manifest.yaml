@@ -1,11 +1,11 @@
-jobId: "1163"
-jobName: Quality-Check-Test
+jobId: "1164"
+jobName: Sun pharma requirement
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: save_data_to_postgres_
+alias: load_all_into_sun_pharma
 discoveryPort:
-  name: Quality-Check-Test
+  name: Sun pharma requirement
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -16,10 +16,14 @@ inputPorts:
       enableDataReconciliation: false
       enforceSchema: false
       dataSetUrn: urn:dv:dataset:2a4d9b83-0e65-472a-9485-abb042427312
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: save_data_to_postgres_
+  alias: load_all_into_sun_pharma
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -38,20 +42,30 @@ productState:
         description: Location of the user
         sourceColumn: City
         sourceTable: public.data_1
+      Occupation:
+        type: STRING
+        description: Occupation of the user
+        sourceColumn: Occupation
+        sourceTable: public.data_1
   stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: true
   updateStrategy: Overwrite
   connection: Postgres Connection
-  tableName: data_quality_test2
+  tableName: public.sun_pharma
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
+    enforceSchemaMethod: Warning
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
   refreshInterval: None
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: "all data copy "
+    description: select all for sun pharma
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
@@ -65,4 +79,11 @@ transformation:
         showData: true
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    NullValueCheck:
+      productState:
+        checks:
+          - column: Age
+            expression: ">"
+            number: 10
+        referenceAlias: load_all_into_sun_pharma
