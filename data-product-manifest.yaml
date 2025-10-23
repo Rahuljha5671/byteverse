@@ -1,11 +1,11 @@
-jobId: "1145"
-jobName: SADP-Rahul-Zap2
+jobId: "1162"
+jobName: Data-Quality-Check-Pipeline
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_all_into_iceberg_for_zap_two
+alias: Load_to_postgres
 discoveryPort:
-  name: SADP-Rahul-Zap2
+  name: Data-Quality-Check-Pipeline
 inputPorts:
   - alias: Postgres_Data_1_1
     isDynamic: true
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_iceberg_for_zap_two
+  alias: Load_to_postgres
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -38,23 +38,29 @@ productState:
         description: Location of the user
         sourceColumn: City
         sourceTable: public.data_1
-  stateStoreType: loadDataIceberg
-  isProfilingEnabled: false
+      Occupation:
+        type: STRING
+        description: Occupation of the user
+        sourceColumn: Occupation
+        sourceTable: public.data_1
+  stateStoreType: writeDataFrameToPostgresTable
+  isProfilingEnabled: true
   updateStrategy: Overwrite
-  tableName: iceberg_meta.user_master
-  warehousePath: /data/tmp/iceberg_warehouse_test
-  catalogName: postgres_catalog
+  connection: Postgres Connection
+  tableName: quality_check_test
   optional:
     persistDataFrame: false
-    enableDataReconciliation: false
+    enableDataReconciliation: true
     enforceSchema: true
-    enforceSchemaMethod: Warning
-    catalogType: postgres
-  refreshInterval: 35 5 * * 5
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
+  refreshInterval: None
 transformation:
   - isDynamic: true
-    alias: Spark_SQL_1
-    description: select all into zap two
+    alias: Spark_SQL_2
+    description: Copy all data
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: Postgres_Data_1_1
@@ -64,4 +70,52 @@ transformation:
       persistDataFrame: false
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    RecordCountCheck:
+      productState:
+        expression: ">="
+        number: 100
+        referenceAlias: Load_to_postgres
+    NullValueCheck:
+      productState:
+        checks:
+          - column: Name
+            expression: ">="
+            number: 0
+        referenceAlias: Load_to_postgres
+    NullCombinationCheck:
+      productState:
+        checks:
+          - columns:
+              - Name
+            expression: <=
+            number: 0.1
+        referenceAlias: Load_to_postgres
+    UniquenessCheck:
+      productState:
+        checks:
+          - column: "Age "
+          - column: Name
+        referenceAlias: Load_to_postgres
+    UniqueCombinationCheck:
+      productState:
+        checks:
+          - columns:
+              - Name
+        referenceAlias: Load_to_postgres
+    DistinctValueCountCheck:
+      productState:
+        checks:
+          - column: Name
+            expression: ">="
+            number: 200
+        referenceAlias: Load_to_postgres
+    UnacceptableTextValueCheck:
+      productState:
+        checks:
+          - column: Name
+            valueList:
+              - Alice
+              - Bob
+            expression: ==
+        referenceAlias: Load_to_postgres
