@@ -1,89 +1,52 @@
-jobId: "1164"
-jobName: Sun pharma requirement
-jobType: Source Aligned Data Product
+jobId: "1166"
+jobName: custom2
+jobType: DataSets
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_all_into_sun_pharma
+alias: ""
 discoveryPort:
-  name: Sun pharma requirement
+  name: custom2
 inputPorts:
-  - alias: Postgres_Data_1_1
+  - alias: Parquet_1
     isDynamic: true
-    connection: Postgres Connection
-    tableName/query: data_1
+    path: ""
     optional:
       persistDataFrame: false
+      advanceOptions:
+        mergeSchema: true
       enableDataReconciliation: false
       enforceSchema: false
-      dataSetUrn: urn:dv:dataset:2a4d9b83-0e65-472a-9485-abb042427312
-      loggingOptions:
-        printSchema: true
-        count: true
-        showData: true
-    type: readPostGreSqlDbUsingJdbc
+      dataSetUrn: ""
+    type: inputParquet
+    dataProductUrn: ""
 productState:
   isDynamic: true
-  alias: load_all_into_sun_pharma
+  alias: ""
   retentionVersions: ""
-  logicalSchema:
-    properties:
-      Name:
-        type: STRING
-        description: Name of the user
-        sourceColumn: Name
-        sourceTable: public.data_1
-      Age:
-        type: STRING
-        description: Age of the user
-        sourceColumn: Age
-        sourceTable: public.data_1
-      City:
-        type: STRING
-        description: Location of the user
-        sourceColumn: City
-        sourceTable: public.data_1
-      Occupation:
-        type: STRING
-        description: Occupation of the user
-        sourceColumn: Occupation
-        sourceTable: public.data_1
-  stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: true
-  updateStrategy: Overwrite
-  connection: Postgres Connection
-  tableName: public.sun_pharma
+  logicalSchema: ""
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: false
+  tableName: ""
+  warehousePath: ""
+  catalogName: ""
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
     enforceSchemaMethod: Warning
-    loggingOptions:
-      printSchema: true
-      count: true
-      showData: true
-  refreshInterval: None
+    catalogType: glue
+  refreshInterval: "* * * * *"
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all for sun pharma
+    description: ""
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: Postgres_Data_1_1
-        tempViewName: temp
-    query: select * from temp
+      - inputDataFrame: Parquet_1
+        tempViewName: ""
+    query: ""
     optional:
       persistDataFrame: false
-      loggingOptions:
-        printSchema: true
-        count: true
-        showData: true
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules:
-    NullValueCheck:
-      productState:
-        checks:
-          - column: Age
-            expression: ">"
-            number: 10
-        referenceAlias: load_all_into_sun_pharma
+  dataQualityRules: {}
