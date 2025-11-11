@@ -1,50 +1,67 @@
-jobId: "1166"
-jobName: custom2
-jobType: DataSets
-developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
+jobId: "984"
+jobName: Test
+jobType: Source Aligned Data Product
+developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: ""
+alias: load_all_into_postgres
 discoveryPort:
-  name: custom2
+  name: Test
 inputPorts:
-  - alias: Parquet_1
+  - alias: data_1_1
     isDynamic: true
-    path: ""
+    connection: Postgres
+    tableName/query: data_1
     optional:
       persistDataFrame: false
-      advanceOptions:
-        mergeSchema: true
       enableDataReconciliation: false
       enforceSchema: false
-      dataSetUrn: ""
-    type: inputParquet
-    dataProductUrn: ""
+      dataSetUrn: urn:dv:dataset:d6fe89a0-adc7-4b3a-941e-940a2e0c0c19
+    type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: ""
+  alias: load_all_into_postgres
   retentionVersions: ""
-  logicalSchema: ""
-  stateStoreType: loadDataIceberg
+  logicalSchema:
+    properties:
+      Name:
+        type: STRING
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
+        type: STRING
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
+        type: STRING
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
+      Occupation:
+        type: STRING
+        description: Profession of the user
+        sourceColumn: Occupation
+        sourceTable: public.data_1
+  stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: false
-  tableName: ""
-  warehousePath: ""
-  catalogName: ""
+  updateStrategy: Overwrite
+  connection: Postgres
+  tableName: public.sadp_test_data_1
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
-    enforceSchemaMethod: Warning
-    catalogType: glue
-  refreshInterval: "* * * * *"
+  refreshInterval: 5 5 * 5 5
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: ""
+    description: select all from data1
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: Parquet_1
-        tempViewName: ""
-    query: ""
+      - inputDataFrame: data_1_1
+        tempViewName: temp
+    query: select * from temp
     optional:
       persistDataFrame: false
     type: operationThroughSqlQuery
