@@ -1,11 +1,11 @@
-jobId: "984"
-jobName: Test
+jobId: "983"
+jobName: User Master
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_into_postgres
+alias: load_all_columns_in_postgres
 discoveryPort:
-  name: Test
+  name: User Master
 inputPorts:
   - alias: data_1_1
     isDynamic: true
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_postgres
+  alias: load_all_columns_in_postgres
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -47,16 +47,20 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres
-  tableName: public.sadp_test_data_1
+  tableName: public.sadp_data_1
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
-  refreshInterval: 5 5 * 5 5
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
+  refreshInterval: 31 12 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from data1
+    description: select all columns
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: data_1_1
@@ -64,6 +68,10 @@ transformation:
     query: select * from temp
     optional:
       persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
     type: operationThroughSqlQuery
 controlPort:
   dataQualityRules: {}
