@@ -1,11 +1,11 @@
-jobId: "985"
-jobName: test
+jobId: "1032"
+jobName: test_sadp_postgres
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
-domain: sales
-alias: load_into_iceberg_
+domain: business
+alias: load_into_postgres_sadp_test
 discoveryPort:
-  name: test1
+  name: test_sadp_postgres
 inputPorts:
   - alias: user_1
     isDynamic: true
@@ -16,13 +16,10 @@ inputPorts:
       enableDataReconciliation: false
       enforceSchema: false
       dataSetUrn: urn:dv:dataset:8c57b358-ddb1-4e65-896a-86fd5899a61e
-      loggingOptions:
-        printSchema: true
-        showData: true
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_into_iceberg_
+  alias: load_into_postgres_sadp_test
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -46,24 +43,20 @@ productState:
         description: Profession of the user
         sourceColumn: Occupation
         sourceTable: public.data_1
-  stateStoreType: loadDataIceberg
+  stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: false
   updateStrategy: Overwrite
-  tableName: iceberg_meta.rahul_sadp
-  warehousePath: s3a://dataverse/testbed_load/
-  catalogName: postgres_catalog
+  connection: Postgres Connection
+  tableName: public.rahul_postgres_sadp_test
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
-    enforceSchemaMethod: Warning
-    catalogType: postgres
-    connection: S3 Connection
-  refreshInterval: 30 12 * * *
+  refreshInterval: None
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select column
+    description: transform postgres sadp
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: user_1
@@ -71,9 +64,6 @@ transformation:
     query: select * from temp
     optional:
       persistDataFrame: false
-      loggingOptions:
-        printSchema: true
-        showData: true
     type: operationThroughSqlQuery
 controlPort:
   dataQualityRules: {}
