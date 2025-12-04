@@ -5,7 +5,7 @@ developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: sales
 alias: load_into_iceberg_
 discoveryPort:
-  name: test
+  name: test1
 inputPorts:
   - alias: user_1
     isDynamic: true
