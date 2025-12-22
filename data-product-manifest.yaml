@@ -1,11 +1,11 @@
-jobId: "1032"
-jobName: test_sadp_postgres
+jobId: "986"
+jobName: test_business
 jobType: Source Aligned Data Product
 developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
 domain: business
-alias: load_into_postgres_sadp_test
+alias: load_all_into_business_test
 discoveryPort:
-  name: test_sadp_postgres
+  name: test_business
 inputPorts:
   - alias: user_1
     isDynamic: true
@@ -15,11 +15,23 @@ inputPorts:
       persistDataFrame: false
       enableDataReconciliation: false
       enforceSchema: false
+      jsonSchema: '{"Name":{"type":"string","source_table":"public.data_1","source_column":"Name","description":"Name
+        of the
+        user"},"Age":{"type":"string","source_table":"public.data_1","source_column":"Age","description":"Age
+        of the
+        user"},"City":{"type":"string","source_table":"public.data_1","source_column":"City","description":"Location
+        of the
+        user"},"Occupation":{"type":"string","source_table":"public.data_1","source_column":"Occupation","description":"Profession
+        of the user"}}'
       dataSetUrn: urn:dv:dataset:8c57b358-ddb1-4e65-896a-86fd5899a61e
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_into_postgres_sadp_test
+  alias: load_all_into_business_test
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -44,19 +56,23 @@ productState:
         sourceColumn: Occupation
         sourceTable: public.data_1
   stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: false
+  isProfilingEnabled: true
   updateStrategy: Overwrite
   connection: Postgres Connection
-  tableName: public.rahul_postgres_sadp_test
+  tableName: public.business_pipeline
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
     enforceSchema: true
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
   refreshInterval: None
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: transform postgres sadp
+    description: select all for businesss test
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: user_1
@@ -64,6 +80,10 @@ transformation:
     query: select * from temp
     optional:
       persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
     type: operationThroughSqlQuery
 controlPort:
   dataQualityRules: {}
