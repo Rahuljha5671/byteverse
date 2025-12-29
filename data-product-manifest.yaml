@@ -1,13 +1,13 @@
 jobId: "983"
-jobName: User Master
+jobName: User Master Rahul
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_columns_in_postgres
+alias: load_all_columns_in_postgres_rahul
 discoveryPort:
-  name: User Master
+  name: User Master Rahul
 inputPorts:
-  - alias: data_1_1
+  - alias: data_1_1_1
     isDynamic: true
     connection: Postgres
     tableName/query: data_1
