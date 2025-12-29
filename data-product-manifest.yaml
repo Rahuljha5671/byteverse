@@ -1,13 +1,13 @@
-jobId: "983"
-jobName: User Master Rahul
+jobId: "1321"
+jobName: dq_run_history_rahul
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_columns_in_postgres_rahul
+alias: load_all_into_postgres_for_data_qiality
 discoveryPort:
-  name: User Master Rahul
+  name: dq_run_history_rahul
 inputPorts:
-  - alias: data_1_1_1
+  - alias: data_1_1
     isDynamic: true
     connection: Postgres
     tableName/query: data_1
@@ -19,7 +19,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_columns_in_postgres
+  alias: load_all_into_postgres_for_data_qiality
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -47,20 +47,16 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres
-  tableName: public.sadp_data_1
+  tableName: public.data_quality_load
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: true
-    loggingOptions:
-      printSchema: true
-      count: true
-      showData: true
-  refreshInterval: 31 12 * * *
+    enforceSchema: false
+  refreshInterval: None
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all columns
+    description: transform for data quality
     sequence: 2
     inputDataFrameList:
       - inputDataFrame: data_1_1
@@ -68,10 +64,6 @@ transformation:
     query: select * from temp
     optional:
       persistDataFrame: false
-      loggingOptions:
-        printSchema: true
-        count: true
-        showData: true
     type: operationThroughSqlQuery
 controlPort:
   dataQualityRules:
@@ -79,4 +71,4 @@ controlPort:
       productState:
         checks:
           - column: Occupation
-        referenceAlias: load_all_columns_in_postgres
+        referenceAlias: load_all_into_postgres_for_data_qiality
