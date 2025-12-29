@@ -51,7 +51,7 @@ productState:
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: false
+    enforceSchema: true
   refreshInterval: None
 transformation:
   - isDynamic: true
