@@ -1,37 +1,25 @@
-jobId: "986"
-jobName: test_business
+jobId: "983"
+jobName: User Master
 jobType: Source Aligned Data Product
-developerId: d4bb3e6c-47b4-4b96-b0cf-24ac4b9bd535
+developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_into_business_test
+alias: load_all_columns_in_postgres
 discoveryPort:
-  name: test_business
+  name: User Master
 inputPorts:
-  - alias: user_1
+  - alias: data_1_1
     isDynamic: true
-    connection: Postgres Connection
+    connection: Postgres
     tableName/query: data_1
     optional:
       persistDataFrame: false
       enableDataReconciliation: false
       enforceSchema: false
-      jsonSchema: '{"Name":{"type":"string","source_table":"public.data_1","source_column":"Name","description":"Name
-        of the
-        user"},"Age":{"type":"string","source_table":"public.data_1","source_column":"Age","description":"Age
-        of the
-        user"},"City":{"type":"string","source_table":"public.data_1","source_column":"City","description":"Location
-        of the
-        user"},"Occupation":{"type":"string","source_table":"public.data_1","source_column":"Occupation","description":"Profession
-        of the user"}}'
-      dataSetUrn: urn:dv:dataset:8c57b358-ddb1-4e65-896a-86fd5899a61e
-      loggingOptions:
-        printSchema: true
-        count: true
-        showData: true
+      dataSetUrn: urn:dv:dataset:d6fe89a0-adc7-4b3a-941e-940a2e0c0c19
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_business_test
+  alias: load_all_columns_in_postgres
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -56,10 +44,10 @@ productState:
         sourceColumn: Occupation
         sourceTable: public.data_1
   stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: true
+  isProfilingEnabled: false
   updateStrategy: Overwrite
-  connection: Postgres Connection
-  tableName: public.business_pipeline
+  connection: Postgres
+  tableName: public.sadp_data_1
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
@@ -68,14 +56,14 @@ productState:
       printSchema: true
       count: true
       showData: true
-  refreshInterval: None
+  refreshInterval: 31 12 * * *
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all for businesss test
+    description: select all columns
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: user_1
+      - inputDataFrame: data_1_1
         tempViewName: temp
     query: select * from temp
     optional:
@@ -86,4 +74,9 @@ transformation:
         showData: true
     type: operationThroughSqlQuery
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    NullValueCheck:
+      productState:
+        checks:
+          - column: Occupation
+        referenceAlias: load_all_columns_in_postgres
