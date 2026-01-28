@@ -32,7 +32,28 @@ productState:
   alias: iceberg_state_management_componenet
   refreshInterval: "* * * * *"
   retentionVersions: ""
-  logicalSchema: ""
+  logicalSchema:
+    properties:
+      Name:
+        type: STRING
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
+        type: STRING
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
+        type: STRING
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
+      Occupation:
+        type: STRING
+        description: Profession of the user
+        sourceColumn: Occupation
+        sourceTable: public.data_1
   enforceSchemaMethod: ""
   isProfilingEnabled: false
 transformation:
