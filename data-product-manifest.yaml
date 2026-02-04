@@ -3,9 +3,9 @@ jobName: test-pyspark
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: iceberg_state_management_componenet
+alias: iceberg_state_management_componenet_1
 discoveryPort:
-  name: test-pyspark
+  name: test-pyspark_1
 inputPorts:
   - alias: data_2_1
     isDynamic: true
