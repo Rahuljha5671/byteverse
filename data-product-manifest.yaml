@@ -18,19 +18,22 @@ inputPorts:
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
 productState:
+  printSchema: true
+  count: true
+  showData: true
   persistDataFrame: false
   catalogType: postgres
   enforceSchema: false
   connection: S3 Connection
   stepName: iceberg state management componenet
-  tableName: iceberg_meta.pyspark_iceberg
+  tableName: iceberg_meta.pyspark_regressive
   warehousePath: s3a://dataverse/iceberg_warehouse_testing/
   catalogName: postgres_catalog
   type: readDataIceberg
   isStateManagement: true
   sequence: 3
   alias: iceberg_state_management_componenet
-  refreshInterval: "* * * * *"
+  refreshInterval: None
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -55,18 +58,29 @@ productState:
         sourceColumn: Occupation
         sourceTable: public.data_1
   enforceSchemaMethod: ""
-  isProfilingEnabled: false
+  isProfilingEnabled: true
 transformation:
   - isDynamic: true
     alias: EMR_PySpark_1
     description: "transform with the help of emr pyspark component "
     sequence: 2
     arguments: []
-    pythonFilePath: s3a://dataverse/iceberg_warehouse_testing
+    pythonFilePath: /home/ec2-user/pyspark_utilities/postgres_to_iceberg_postgres_catalog_pyspark_script.py
     inputDataFrameList:
       - inputDataFrame: data_2_1
         tempViewName: ""
     optional: {}
     type: customPySparkEMRServerless
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    NullValueCheck:
+      productState:
+        checks:
+          - column: Name
+            expression: ==
+        referenceAlias: iceberg_state_management_componenet
+    UniquenessCheck:
+      productState:
+        checks:
+          - column: City
+        referenceAlias: iceberg_state_management_componenet
