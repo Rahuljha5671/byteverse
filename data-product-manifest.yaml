@@ -1,11 +1,11 @@
-jobId: "2476"
-jobName: test-pyspark
+jobId: "2480"
+jobName: pyspark_scheduling_check
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: iceberg_state_management_componenet_1
+alias: load_for_statemeangement_scheduling
 discoveryPort:
-  name: test-pyspark_1
+  name: pyspark_scheduling_check
 inputPorts:
   - alias: data_2_1
     isDynamic: true
@@ -18,22 +18,19 @@ inputPorts:
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
 productState:
-  printSchema: true
-  count: true
-  showData: true
   persistDataFrame: false
   catalogType: postgres
-  enforceSchema: false
+  enforceSchema: true
   connection: S3 Connection
-  stepName: iceberg state management componenet
+  stepName: load for statemeangement scheduling
   tableName: iceberg_meta.pyspark_regressive
   warehousePath: s3a://dataverse/iceberg_warehouse_testing/
   catalogName: postgres_catalog
   type: readDataIceberg
   isStateManagement: true
   sequence: 3
-  alias: iceberg_state_management_componenet
-  refreshInterval: None
+  alias: load_for_statemeangement_scheduling
+  refreshInterval: "* * * * 4"
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -58,11 +55,11 @@ productState:
         sourceColumn: Occupation
         sourceTable: public.data_1
   enforceSchemaMethod: ""
-  isProfilingEnabled: true
+  isProfilingEnabled: false
 transformation:
   - isDynamic: true
     alias: EMR_PySpark_1
-    description: "transform with the help of emr pyspark component "
+    description: transform for scheduling
     sequence: 2
     arguments: []
     pythonFilePath: /home/ec2-user/pyspark_utilities/postgres_to_iceberg_postgres_catalog_pyspark_script.py
@@ -72,15 +69,4 @@ transformation:
     optional: {}
     type: customPySparkEMRServerless
 controlPort:
-  dataQualityRules:
-    NullValueCheck:
-      productState:
-        checks:
-          - column: Name
-            expression: ==
-        referenceAlias: iceberg_state_management_componenet
-    UniquenessCheck:
-      productState:
-        checks:
-          - column: City
-        referenceAlias: iceberg_state_management_componenet
+  dataQualityRules: {}
