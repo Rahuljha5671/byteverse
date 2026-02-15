@@ -1,20 +1,22 @@
-jobId: "2486"
-jobName: col-lineage-adp
-jobType: Aggregated Data Product
+jobId: "2488"
+jobName: col-lineage-wo-use
+jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_into_adp
+alias: load_all_into_sadp_wo_use_all
 discoveryPort:
-  name: col-lineage-adp
+  name: col-lineage-wo-use
 inputPorts:
-  - alias: data2_sadp_1
+  - alias: data_2_1
     isDynamic: true
-    dataProductUrn: urn:dv:dataproduct:6187c8c3-739b-4305-9a30-44d3775881c9
-    filter: ""
-    projection: ""
+    connection: Postgres
+    tableName/query: data_2
     optional:
       persistDataFrame: false
-    type: dataproduct
+      enableDataReconciliation: false
+      enforceSchema: false
+      dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
+    type: readPostGreSqlDbUsingJdbc
   - alias: city_info_1
     isDynamic: true
     connection: Postgres
@@ -27,7 +29,7 @@ inputPorts:
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_adp
+  alias: load_all_into_sadp_wo_use_all
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -55,7 +57,7 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres
-  tableName: public.col_lineage_adp
+  tableName: public.col_wo_use_all
   optional:
     persistDataFrame: true
     enableDataReconciliation: false
@@ -64,18 +66,14 @@ productState:
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from col-lineage-sadp
+    description: select all from data_2 only
     sequence: 3
     inputDataFrameList:
-      - inputDataFrame: data2_sadp_1
+      - inputDataFrame: data_2_1
         tempViewName: d
       - inputDataFrame: city_info_1
         tempViewName: c
-    query: SELECT d.name,d.age,d.city,c.country,c.region,CASE WHEN d.age < 30 THEN
-      'Young' WHEN d.age BETWEEN 30 AND 50 THEN 'Mid' ELSE 'Senior' END AS
-      age_group,CASE WHEN d.age >= 60 THEN true ELSE false END AS
-      is_senior,UPPER(d.occupation) AS occupation_normalized FROM d JOIN c ON
-      d.city = c.city;
+    query: select a* from d
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
