@@ -17,6 +17,16 @@ inputPorts:
       enforceSchema: false
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
+  - alias: city_info_1
+    isDynamic: true
+    connection: Postgres
+    tableName/query: city_info
+    optional:
+      persistDataFrame: false
+      enableDataReconciliation: false
+      enforceSchema: false
+      dataSetUrn: urn:dv:dataset:f5853bd6-a108-46cd-a01f-61ccaf39f536
+    type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
   alias: load_all_into_data_col_lineage
@@ -57,11 +67,17 @@ transformation:
   - isDynamic: true
     alias: Spark_SQL_1
     description: select all from data 2 for col lineage
-    sequence: 2
+    sequence: 3
     inputDataFrameList:
       - inputDataFrame: data_2_1
-        tempViewName: temp
-    query: select * from temp
+        tempViewName: d
+      - inputDataFrame: city_info_1
+        tempViewName: c
+    query: SELECT d.name,d.age,d.city,c.country,c.region,CASE WHEN d.age < 30 THEN
+      'Young' WHEN d.age BETWEEN 30 AND 50 THEN 'Mid' ELSE 'Senior' END AS
+      age_group,CASE WHEN d.age >= 60 THEN true ELSE false END AS
+      is_senior,UPPER(d.occupation) AS occupation_normalized FROM d JOIN c ON
+      d.city = c.city;
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
