@@ -49,7 +49,7 @@ productState:
   connection: Postgres
   tableName: public.data_col_lineage
   optional:
-    persistDataFrame: false
+    persistDataFrame: true
     enableDataReconciliation: false
     enforceSchema: true
   refreshInterval: None
@@ -63,7 +63,7 @@ transformation:
         tempViewName: temp
     query: select * from temp
     optional:
-      persistDataFrame: false
+      persistDataFrame: true
     type: operationThroughSqlQuery
 controlPort:
   dataQualityRules: {}
