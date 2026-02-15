@@ -1,11 +1,11 @@
-jobId: "2480"
-jobName: pyspark_scheduling_check
+jobId: "2485"
+jobName: Column-lineage-dp
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_for_statemeangement_scheduling
+alias: load_all_into_data_col_lineage
 discoveryPort:
-  name: pyspark_scheduling_check
+  name: Column-lineage-dp
 inputPorts:
   - alias: data_2_1
     isDynamic: true
@@ -18,19 +18,8 @@ inputPorts:
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
 productState:
-  persistDataFrame: false
-  catalogType: postgres
-  enforceSchema: true
-  connection: S3 Connection
-  stepName: load for statemeangement scheduling
-  tableName: iceberg_meta.pyspark_regressive
-  warehousePath: s3a://dataverse/iceberg_warehouse_testing/
-  catalogName: postgres_catalog
-  type: readDataIceberg
-  isStateManagement: true
-  sequence: 3
-  alias: load_for_statemeangement_scheduling
-  refreshInterval: "* * * * 4"
+  isDynamic: true
+  alias: load_all_into_data_col_lineage
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -54,19 +43,27 @@ productState:
         description: Profession of the user
         sourceColumn: Occupation
         sourceTable: public.data_1
-  enforceSchemaMethod: ""
+  stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: false
+  updateStrategy: Overwrite
+  connection: Postgres
+  tableName: public.data_col_lineage
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: true
+  refreshInterval: None
 transformation:
   - isDynamic: true
-    alias: EMR_PySpark_1
-    description: transform for scheduling
+    alias: Spark_SQL_1
+    description: select all from data 2 for col lineage
     sequence: 2
-    arguments: []
-    pythonFilePath: /home/ec2-user/pyspark_utilities/postgres_to_iceberg_postgres_catalog_pyspark_script.py
     inputDataFrameList:
       - inputDataFrame: data_2_1
-        tempViewName: ""
-    optional: {}
-    type: customPySparkEMRServerless
+        tempViewName: temp
+    query: select * from temp
+    optional:
+      persistDataFrame: false
+    type: operationThroughSqlQuery
 controlPort:
   dataQualityRules: {}
