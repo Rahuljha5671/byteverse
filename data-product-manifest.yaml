@@ -73,7 +73,7 @@ transformation:
         tempViewName: d
       - inputDataFrame: city_info_1
         tempViewName: c
-    query: select a* from d
+    query: select * from d
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
