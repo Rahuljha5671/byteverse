@@ -1,11 +1,11 @@
-jobId: "2488"
-jobName: col-lineage-wo-use
+jobId: "2489"
+jobName: col-lineage-cross-join
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_into_sadp_wo_use_all
+alias: load_all_as_cross_join
 discoveryPort:
-  name: col-lineage-wo-use
+  name: col-lineage-cross-join
 inputPorts:
   - alias: data_2_1
     isDynamic: true
@@ -17,19 +17,19 @@ inputPorts:
       enforceSchema: false
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
-  - alias: city_info_1
+  - alias: shift_1
     isDynamic: true
     connection: Postgres
-    tableName/query: city_info
+    tableName/query: shifts
     optional:
       persistDataFrame: false
       enableDataReconciliation: false
       enforceSchema: false
-      dataSetUrn: urn:dv:dataset:f5853bd6-a108-46cd-a01f-61ccaf39f536
+      dataSetUrn: urn:dv:dataset:2bf2bb55-61de-4b57-b730-be1af84f42fb
     type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_sadp_wo_use_all
+  alias: load_all_as_cross_join
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -57,7 +57,7 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres
-  tableName: public.col_wo_use_all
+  tableName: public.col_lineage_cross_join
   optional:
     persistDataFrame: true
     enableDataReconciliation: false
@@ -66,14 +66,14 @@ productState:
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from data_2 only
+    description: transform for cross join
     sequence: 3
     inputDataFrameList:
       - inputDataFrame: data_2_1
         tempViewName: d
-      - inputDataFrame: city_info_1
-        tempViewName: c
-    query: select * from d
+      - inputDataFrame: shift_1
+        tempViewName: s
+    query: SELECT d.name,d.city,s.shift_name FROM d CROSS JOIN s;
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
