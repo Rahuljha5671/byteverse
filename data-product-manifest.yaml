@@ -1,11 +1,11 @@
-jobId: "2485"
-jobName: Column-lineage-dp
+jobId: "2487"
+jobName: data2_sadp
 jobType: Source Aligned Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: business
-alias: load_all_into_data_col_lineage
+alias: load_all_into_data2_sadp
 discoveryPort:
-  name: Column-lineage-dp
+  name: data2_sadp
 inputPorts:
   - alias: data_2_1
     isDynamic: true
@@ -17,19 +17,9 @@ inputPorts:
       enforceSchema: false
       dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
     type: readPostGreSqlDbUsingJdbc
-  - alias: city_info_1
-    isDynamic: true
-    connection: Postgres
-    tableName/query: city_info
-    optional:
-      persistDataFrame: false
-      enableDataReconciliation: false
-      enforceSchema: false
-      dataSetUrn: urn:dv:dataset:f5853bd6-a108-46cd-a01f-61ccaf39f536
-    type: readPostGreSqlDbUsingJdbc
 productState:
   isDynamic: true
-  alias: load_all_into_data_col_lineage
+  alias: load_all_into_data2_sadp
   retentionVersions: ""
   logicalSchema:
     properties:
@@ -57,7 +47,7 @@ productState:
   isProfilingEnabled: false
   updateStrategy: Overwrite
   connection: Postgres
-  tableName: public.data_col_lineage
+  tableName: public.data2_sadp
   optional:
     persistDataFrame: true
     enableDataReconciliation: false
@@ -66,18 +56,12 @@ productState:
 transformation:
   - isDynamic: true
     alias: Spark_SQL_1
-    description: select all from data 2 for col lineage
-    sequence: 3
+    description: select all from data_2
+    sequence: 2
     inputDataFrameList:
       - inputDataFrame: data_2_1
-        tempViewName: d
-      - inputDataFrame: city_info_1
-        tempViewName: c
-    query: SELECT d.name,d.age,d.city,c.country,c.region,CASE WHEN d.age < 30 THEN
-      'Young' WHEN d.age BETWEEN 30 AND 50 THEN 'Mid' ELSE 'Senior' END AS
-      age_group,CASE WHEN d.age >= 60 THEN true ELSE false END AS
-      is_senior,UPPER(d.occupation) AS occupation_normalized FROM d JOIN c ON
-      d.city = c.city;
+        tempViewName: temp
+    query: select * from temp
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
