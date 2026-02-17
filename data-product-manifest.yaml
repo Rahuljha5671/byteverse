@@ -1,67 +1,158 @@
-jobId: "2494"
-jobName: supply_chain_col_lineage
-jobType: Source Aligned Data Product
+jobId: "1316"
+jobName: Shop Level Equipment Resource Allocation
+jobType: Aggregated Data Product
 developerId: b8f49c1f-f967-420f-8709-ea864dc0caa5
 domain: supply_chain
-alias: load_all_into_pos
+alias: ADP_LOAD
 discoveryPort:
-  name: supply_chain_col_lineage
+  name: Shop Level Equipment Resource Allocation
 inputPorts:
-  - alias: data_2_1
+  - alias: Shop_360_1
     isDynamic: true
-    connection: Postgres
-    tableName/query: data_2
+    dataProductUrn: urn:dv:dataproduct:45947239-31b3-4c5f-b009-56bb31cf9aca
+    filter: ""
+    projection: ""
     optional:
       persistDataFrame: false
-      enableDataReconciliation: false
-      enforceSchema: false
-      dataSetUrn: urn:dv:dataset:faa03fb5-a145-4b8e-985b-90ffb96b1e27
-    type: readPostGreSqlDbUsingJdbc
+    type: dataproduct
 productState:
   isDynamic: true
-  alias: load_all_into_pos
+  alias: ADP_LOAD
   retentionVersions: ""
   logicalSchema:
     properties:
-      Name:
+      SHOP_ID:
         type: STRING
-        description: Name of the user
-        sourceColumn: Name
-        sourceTable: public.data_1
-      Age:
+        description: Unique identifier for the shop or production unit.
+        sourceColumn: SHOP_ID
+        sourceTable: Shop 360
+      AREA_TYPE:
         type: STRING
-        description: Age of the user
-        sourceColumn: Age
-        sourceTable: public.data_1
-      City:
+        description: Type or classification of the area (e.g., Manufacturing, Packaging).
+        sourceColumn: AREA_TYPE
+        sourceTable: Shop 360
+      SHOP_NAME:
         type: STRING
-        description: Location of the user
-        sourceColumn: City
-        sourceTable: public.data_1
-      Occupation:
+        description: Descriptive name of the shop or production area.
+        sourceColumn: SHOP_NAME
+        sourceTable: Shop 360
+      DRYER_COUNT:
         type: STRING
-        description: Profession of the user
-        sourceColumn: Occupation
-        sourceTable: public.data_1
-  stateStoreType: writeDataFrameToPostgresTable
-  isProfilingEnabled: false
+        description: Number of equipment units related to drying (e.g., Fluid Bed Dryer,
+          Tray Dryer).
+        sourceColumn: EQP_TYPE
+        sourceTable: Shop 360
+      REACTOR_COUNT:
+        type: STRING
+        description: Number of reactor-type equipment units in the shop.
+        sourceColumn: EQP_TYPE
+        sourceTable: Shop 360
+      TOTAL_CAPACITY:
+        type: STRING
+        description: Total production or processing capacity of all equipment in the shop.
+        sourceColumn: CAPACITY
+        sourceTable: Shop 360
+      FILTRATION_COUNT:
+        type: STRING
+        description: Count of filtration equipment (FILTER or CENTRIFUGE) in the shop.
+        sourceColumn: EQP_TYPE
+        sourceTable: Shop 360
+      MONTHLY_BATCH_COUNT:
+        type: STRING
+        description: Total number of batches processed in the shop per month.
+        sourceColumn: MONTHLY_BATCH_COUNT
+        sourceTable: Shop 360
+      TOTAL_EQUIPMENT_COUNT:
+        type: STRING
+        description: Total number of distinct equipment units in the shop.
+        sourceColumn: EQP_ID
+        sourceTable: Shop 360
+      ACTIVE_EQUIPMENT_COUNT:
+        type: STRING
+        description: Count of equipment currently marked as 'ACTIVE' in the shop.
+        sourceColumn: STATUS
+        sourceTable: Shop 360
+      RESOURCE_BALANCE_STATUS:
+        type: STRING
+        description: Status indicating whether the available resources are balanced
+          against production demands.
+        sourceColumn: RESOURCE_BALANCE_STATUS
+        sourceTable: Shop 360
+      AVG_EQUIPMENT_UTILIZATION:
+        type: STRING
+        description: Average utilization percentage of all equipment in the shop.
+        sourceColumn: UTILIZATION_PERCENT
+        sourceTable: Shop 360
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: true
   updateStrategy: Overwrite
-  connection: Postgres
-  tableName: public.supply_data2
+  tableName: iceberg_meta.shop_level_equipment_resource_allocation
+  warehousePath: s3a://bp-spark-sql-library-test-acc/
+  catalogName: postgres_catalog
   optional:
     persistDataFrame: false
     enableDataReconciliation: false
-    enforceSchema: true
+    enforceSchema: false
+    enforceSchemaMethod: Warning
+    catalogType: postgres
+    connection: S3 Connection
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
   refreshInterval: None
 transformation:
   - isDynamic: true
-    alias: Spark_SQL_1
-    description: select all from data2 supply cahin
+    alias: MonthlyBatchCount
+    description: MonthlyBatchCount
     sequence: 2
     inputDataFrameList:
-      - inputDataFrame: data_2_1
-        tempViewName: temp
-    query: select * from temp
+      - inputDataFrame: Shop_360_1
+        tempViewName: Shop360
+    query: SELECT COUNT(DISTINCT BATCH_ID) AS MONTHLY_BATCH_COUNT FROM Shop360 WHERE
+      START_TIME >= add_months(current_date(), -1)
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+    type: operationThroughSqlQuery
+  - isDynamic: true
+    alias: UtilizationStats
+    description: UtilizationStats
+    sequence: 3
+    inputDataFrameList:
+      - inputDataFrame: Shop_360_1
+        tempViewName: Shop360
+    query: SELECT MAX(UTILIZATION_PERCENT) AS MAX_UTIL, MIN(UTILIZATION_PERCENT) AS
+      MIN_UTIL FROM Shop360
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+    type: operationThroughSqlQuery
+  - isDynamic: true
+    alias: Shop_Level_Equipment_Logic
+    description: ADP Logic
+    sequence: 4
+    inputDataFrameList:
+      - inputDataFrame: MonthlyBatchCount
+        tempViewName: MonthlyBatchCount
+      - inputDataFrame: UtilizationStats
+        tempViewName: UtilizationStats
+      - inputDataFrame: Shop_360_1
+        tempViewName: Shop360
+    query: SELECT s.SHOP_ID, s.SHOP_NAME, s.AREA_TYPE, COUNT(DISTINCT s.EQP_ID) AS
+      TOTAL_EQUIPMENT_COUNT, SUM(CASE WHEN s.STATUS = 'ACTIVE' THEN 1 ELSE 0
+      END) AS ACTIVE_EQUIPMENT_COUNT, ROUND(AVG(s.UTILIZATION_PERCENT),1) AS
+      AVG_EQUIPMENT_UTILIZATION, COUNT(DISTINCT CASE WHEN s.EQP_TYPE = 'REACTOR'
+      THEN s.EQP_ID END) AS REACTOR_COUNT, COUNT(DISTINCT CASE WHEN s.EQP_TYPE
+      IN ('FILTER', 'CENTRIFUGE') THEN s.EQP_ID END) AS FILTRATION_COUNT,
+      COUNT(DISTINCT CASE WHEN s.EQP_TYPE LIKE '%DRY%' THEN s.EQP_ID END) AS
+      DRYER_COUNT, SUM(s.CAPACITY) AS TOTAL_CAPACITY, mb.MONTHLY_BATCH_COUNT,
+      CASE WHEN us.MAX_UTIL - us.MIN_UTIL <= 15 THEN 'Balanced' ELSE
+      'Unbalanced' END AS RESOURCE_BALANCE_STATUS FROM Shop360 s CROSS JOIN
+      MonthlyBatchCount mb CROSS JOIN UtilizationStats us GROUP BY s.SHOP_ID,
+      s.SHOP_NAME, s.AREA_TYPE, mb.MONTHLY_BATCH_COUNT, us.MAX_UTIL, us.MIN_UTIL
     optional:
       persistDataFrame: false
     type: operationThroughSqlQuery
