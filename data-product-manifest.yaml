@@ -37,22 +37,17 @@ productState:
         type: STRING
         description: Name of the user
         sourceColumn: Name
-        sourceTable: public.data_1
-      Age:
-        type: STRING
-        description: Age of the user
-        sourceColumn: Age
-        sourceTable: public.data_1
+        sourceTable: public.data_2
       City:
         type: STRING
         description: Location of the user
         sourceColumn: City
-        sourceTable: public.data_1
-      Occupation:
+        sourceTable: public.data_2
+      Shift_Name:
         type: STRING
-        description: Profession of the user
-        sourceColumn: Occupation
-        sourceTable: public.data_1
+        description: shift of the user of the user
+        sourceColumn: shift_name
+        sourceTable: public.shifts
   stateStoreType: writeDataFrameToPostgresTable
   isProfilingEnabled: false
   updateStrategy: Overwrite
@@ -73,7 +68,7 @@ transformation:
         tempViewName: d
       - inputDataFrame: shift_1
         tempViewName: s
-    query: SELECT d.name,d.city,s.shift_name FROM d CROSS JOIN s;
+    query: SELECT d.Name,d.City,s.shift_name FROM d CROSS JOIN s;
     optional:
       persistDataFrame: true
     type: operationThroughSqlQuery
